@@ -20,7 +20,7 @@ Instead of fighting the Operator, this controller lets you create a **Shadow Ser
 
 This provides a stable DNS entry (e.g., `keycloak-shadow.my-ns.svc`) that resolves exclusively to UDN IPs, allowing you to configure your application's discovery mechanism (like JGroups) to use the UDN without modifying the Operator's resources.
 
->**NOTE:** The shadow service suould not have selectors, as fetching pods will manage additional EndpointSlices in the default cluster network.
+>**NOTE:** Ensure your Shadow Service has an empty selector. Defining a selector will cause the standard Kubernetes controller to inject Default Network IPs, polluting the UDN-only traffic path.
 
 ## Getting Started
 
