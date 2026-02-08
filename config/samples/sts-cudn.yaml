@@ -1,0 +1,79 @@
+apiVersion: k8s.ovn.org/v1
+kind: ClusterUserDefinedNetwork
+metadata:
+  name: demo-cudn
+spec:
+  network:
+    topology: Layer3
+    layer3:
+      role: Primary
+      subnets:
+        - cidr: 20.0.0.0/16
+  namespaceSelector:
+    matchLabels:
+      cudn-network: demo
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-cudn
+  labels:
+    cudn-network: demo
+    k8s.ovn.org/primary-user-defined-network: ""
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  namespace: demo-cudn
+  labels:
+    app: hello
+spec:
+  ports:
+  - port: 8080
+    name: web
+  clusterIP: None
+  selector:
+    app: hello
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: web
+  namespace: demo-cudn
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: hello
+          image: openshift/hello-openshift
+          env: 
+          - name: RESPONSE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          ports:
+            - name: web
+              containerPort: 8080
+              protocol: TCP
+  serviceName: hello
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-headless
+  namespace: demo-cudn
+  annotations: 
+    bizcochillo.io/shadow-of: hello
+spec:
+  ports:
+  - port: 8080
+    name: web
+  clusterIP: None

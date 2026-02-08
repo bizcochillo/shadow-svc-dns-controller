@@ -7,7 +7,7 @@
 /testbin/
 
 # Temporary generated files
-*.yaml
+#*.yaml
 
 # Created by https://gitignore.org
 # Go.gitignore

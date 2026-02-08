@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    bizcochillo.io/shadow-of: hello
+  creationTimestamp: null
+  name: hello-headless
+spec:
+  clusterIP: None
+  ports:
+  - name: web
+    port: 8080
+    targetPort: 0
+status:
+  loadBalancer: {}
