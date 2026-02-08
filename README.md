@@ -106,7 +106,7 @@ Users can just run 'kubectl apply -f <URL for YAML BUNDLE>' to install
 the project, i.e.:
 
 ```sh
-oc apply -f https://raw.githubusercontent.com/bizcochillo/shadow-svc-dns-controller/main/dist/install.yaml
+oc apply -f https://raw.githubusercontent.com/bizcochillo/shadow-svc-dns-controller/refs/heads/main/dist/install.yaml
 ```
 
 ## Contributing
