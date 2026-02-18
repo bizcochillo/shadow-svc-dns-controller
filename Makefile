@@ -168,7 +168,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: ## Build docker image with the manager.
-	$(CONTAINER_TOOL) build --platform linux/amd64 -t ${IMG} .
+	$(CONTAINER_TOOL) build -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -213,7 +213,7 @@ podman-release: ## Build and push multi-arch image using Podman
 
 	# 7. Clean up the local manifest to save space
 	$(CONTAINER_TOOL) manifest rm ${IMG}
-	
+
 .PHONY: build-installer
 build-installer: manifests generate kustomize ## Generate a consolidated YAML with CRDs and deployment.
 	mkdir -p dist
