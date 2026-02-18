@@ -40,8 +40,14 @@ export CONTAINER_TOOL=podman
 ```
 
 **Build and push your image to the location specified by `IMG` (No need of IMG if you have export the variable):**
+>**NOTE:** This method allows you to upload an image to the target registry built with the default architecture of the agent where it has been built. 
 ```sh
 make docker-build docker-push IMG=<some-registry>/operator:tag
+```
+
+**Build and push your image to the location specified by `IMG` in multi-architecture mode and podman:**
+```sh
+make podman-release IMG=<some-registry>/operator:tag
 ```
 
 **NOTE:** This image ought to be published in the personal registry you specified.
