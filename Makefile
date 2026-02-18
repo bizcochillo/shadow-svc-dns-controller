@@ -168,7 +168,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: ## Build docker image with the manager.
-	$(CONTAINER_TOOL) build -t ${IMG} .
+	$(CONTAINER_TOOL) build --platform linux/amd64 -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -191,6 +191,29 @@ docker-buildx: ## Build and push docker image for the manager for cross-platform
 	- $(CONTAINER_TOOL) buildx rm operator-builder
 	rm Dockerfile.cross
 
+.PHONY: podman-release
+podman-release: ## Build and push multi-arch image using Podman
+	# 1. Clean up any existing manifest list
+	- $(CONTAINER_TOOL) manifest rm ${IMG}
+
+	# 2. [NEW] Clean up any existing standard image with the same name
+	- $(CONTAINER_TOOL) image rm ${IMG}
+
+	# 3. Create a new empty manifest list
+	$(CONTAINER_TOOL) manifest create ${IMG}
+
+	# 4. Build and add the AMD64 image to the manifest
+	$(CONTAINER_TOOL) build --platform linux/amd64 --manifest ${IMG} .
+
+	# 5. Build and add the ARM64 image to the manifest
+	$(CONTAINER_TOOL) build --platform linux/arm64 --manifest ${IMG} .
+
+	# 6. Push the manifest list to the registry
+	$(CONTAINER_TOOL) manifest push ${IMG} docker://${IMG}
+
+	# 7. Clean up the local manifest to save space
+	$(CONTAINER_TOOL) manifest rm ${IMG}
+	
 .PHONY: build-installer
 build-installer: manifests generate kustomize ## Generate a consolidated YAML with CRDs and deployment.
 	mkdir -p dist
